@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vine Orders Catalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f1e6;
+        --bg-accent: #f1e0c6;
+        --ink: #1c1a17;
+        --muted: #6c6257;
+        --card: #fff9f2;
+        --stroke: #e1d6c9;
+        --accent: #d65c32;
+        --accent-2: #2f7d6d;
+        --shadow: 0 10px 30px rgba(28, 26, 23, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(900px 400px at 10% -10%, var(--bg-accent), transparent),
+          radial-gradient(700px 450px at 110% 10%, #f3e9d6, transparent),
+          repeating-linear-gradient(
+            135deg,
+            rgba(214, 92, 50, 0.04),
+            rgba(214, 92, 50, 0.04) 12px,
+            transparent 12px,
+            transparent 24px
+          ),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 32px 20px 12px;
+        text-align: center;
+      }
+
+      .title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(28px, 4vw, 44px);
+        margin: 0 0 8px;
+        letter-spacing: 0.5px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin: 0 auto;
+        max-width: 720px;
+      }
+
+      .toolbar {
+        margin: 22px auto 18px;
+        padding: 12px 16px;
+        max-width: 1080px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid var(--stroke);
+        border-radius: 14px;
+        background: rgba(255, 249, 242, 0.9);
+        box-shadow: var(--shadow);
+      }
+
+      .toolbar strong {
+        font-weight: 600;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--accent-2);
+        color: #fff;
+        font-size: 12px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        min-width: 220px;
+      }
+
+      .search input {
+        border: none;
+        outline: none;
+        font-size: 13px;
+        width: 100%;
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .search input::placeholder {
+        color: var(--muted);
+      }
+
+      .price-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        font-size: 12px;
+      }
+
+      .price-filter input {
+        width: 90px;
+        border: none;
+        outline: none;
+        font-size: 13px;
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .price-filter input::placeholder {
+        color: var(--muted);
+      }
+
+      main {
+        padding: 0 18px 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 260px;
+        box-shadow: var(--shadow);
+        transform: translateY(8px);
+        opacity: 0;
+        animation: rise 0.6s ease forwards;
+      }
+
+      .card a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .thumb {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: linear-gradient(120deg, #f4d7b5, #f7eee2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.35s ease;
+      }
+
+      .thumb .missing {
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .card:hover .thumb img {
+        transform: scale(1.05);
+      }
+
+      .content {
+        padding: 12px 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .name {
+        font-size: 14px;
+        line-height: 1.3;
+        font-weight: 600;
+        min-height: 40px;
+      }
+
+      .price {
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .sentinel {
+        margin: 28px auto 0;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .error {
+        margin: 24px auto 0;
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid #efc0a8;
+        background: #fff2e8;
+        color: #7b3f2a;
+        max-width: 820px;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="title">Vine Orders Catalog</h1>
+      <p class="subtitle">
+        Visualizador de pedidos de Vine con carga infinita. Los datos vienen de
+        <strong>vine_orders.json</strong>.
+      </p>
+    </header>
+
+    <div class="toolbar">
+      <div>
+        <strong id="count">0</strong> productos cargados
+      </div>
+      <div class="filters">
+        <label class="search">
+          <span>Buscar</span>
+          <input id="searchInput" type="search" placeholder="Nombre, precio, URL" />
+        </label>
+        <label class="price-filter">
+          <span>Precio</span>
+          <input id="priceMinInput" type="text" inputmode="decimal" placeholder="Min" />
+          <span>-</span>
+          <input id="priceMaxInput" type="text" inputmode="decimal" placeholder="Max" />
+        </label>
+      </div>
+      <span class="badge" id="status">Cargando</span>
+    </div>
+
+    <main>
+      <div class="grid" id="grid"></div>
+      <div class="sentinel" id="sentinel">Desplaza para cargar mas...</div>
+      <div class="error" id="error" hidden></div>
+    </main>
+
+    <script>
+      const grid = document.getElementById("grid");
+      const countEl = document.getElementById("count");
+      const statusEl = document.getElementById("status");
+      const sentinel = document.getElementById("sentinel");
+      const errorBox = document.getElementById("error");
+      const searchInput = document.getElementById("searchInput");
+      const priceMinInput = document.getElementById("priceMinInput");
+      const priceMaxInput = document.getElementById("priceMaxInput");
+
+      const batchSize = 20;
+      let allItems = [];
+      let items = [];
+      let cursor = 0;
+      let observerActive = false;
+
+      function updateStatus(text, tone) {
+        statusEl.textContent = text;
+        if (tone === "done") {
+          statusEl.style.background = "#2f7d6d";
+        } else if (tone === "warn") {
+          statusEl.style.background = "#d65c32";
+        } else {
+          statusEl.style.background = "#2f7d6d";
+        }
+      }
+
+      function normalizeText(value, fallback) {
+        if (!value) {
+          return fallback;
+        }
+        return String(value);
+      }
+
+      function resetGrid() {
+        grid.innerHTML = "";
+        cursor = 0;
+        countEl.textContent = items.length ? `0/${items.length}` : "0";
+        sentinel.textContent = "Desplaza para cargar mas...";
+      }
+
+      function parsePrice(value) {
+        if (!value) {
+          return null;
+        }
+        const match = String(value).match(/[0-9][0-9.,]*/);
+        if (!match) {
+          return null;
+        }
+        let raw = match[0];
+        if (raw.includes(".") && raw.includes(",")) {
+          raw = raw.replace(/\./g, "").replace(",", ".");
+        } else if (raw.includes(",")) {
+          raw = raw.replace(",", ".");
+        }
+        const parsed = parseFloat(raw);
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function buildCard(item, index) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.style.animationDelay = `${Math.min(index * 0.02, 0.4)}s`;
+
+        const link = document.createElement("a");
+        link.href = item.url || "#";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        const thumb = document.createElement("div");
+        thumb.className = "thumb";
+
+        if (item.image_url) {
+          const img = document.createElement("img");
+          img.src = item.image_url;
+          img.alt = normalizeText(item.name, "Producto");
+          img.loading = "lazy";
+          img.onerror = () => {
+            img.remove();
+            const label = document.createElement("div");
+            label.className = "missing";
+            label.textContent = "Sin imagen";
+            thumb.appendChild(label);
+          };
+          thumb.appendChild(img);
+        } else {
+          const label = document.createElement("div");
+          label.className = "missing";
+          label.textContent = "Sin imagen";
+          thumb.appendChild(label);
+        }
+
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = normalizeText(item.name, "Producto sin nombre");
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = normalizeText(item.price, "Precio no disponible");
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = item.url ? "Ver detalle" : "Sin enlace";
+
+        content.appendChild(name);
+        content.appendChild(price);
+        content.appendChild(meta);
+
+        link.appendChild(thumb);
+        link.appendChild(content);
+        card.appendChild(link);
+
+        return card;
+      }
+
+      function renderNextBatch() {
+        const slice = items.slice(cursor, cursor + batchSize);
+        if (!slice.length) {
+          sentinel.textContent = items.length ? "Fin del catalogo." : "Sin resultados.";
+          updateStatus(items.length ? "Fin" : "Sin resultados", items.length ? "done" : "warn");
+          stopObserver();
+          return;
+        }
+
+        slice.forEach((item, i) => {
+          grid.appendChild(buildCard(item, cursor + i));
+        });
+        cursor += slice.length;
+        countEl.textContent = `${cursor}/${items.length}`;
+        updateStatus("Listo", "done");
+      }
+
+      function stopObserver() {
+        if (observerActive) {
+          observer.disconnect();
+          observerActive = false;
+        }
+      }
+
+      function startObserver() {
+        if (!observerActive) {
+          observer.observe(sentinel);
+          observerActive = true;
+        }
+      }
+
+      function applyFilters() {
+        const needle = searchInput.value.trim().toLowerCase();
+        const minValue = parsePrice(priceMinInput.value);
+        const maxValue = parsePrice(priceMaxInput.value);
+
+        items = allItems.filter((item) => {
+          if (needle) {
+            const name = (item.name || "").toLowerCase();
+            const price = (item.price || "").toLowerCase();
+            const url = (item.url || "").toLowerCase();
+            if (!name.includes(needle) && !price.includes(needle) && !url.includes(needle)) {
+              return false;
+            }
+          }
+
+          if (minValue !== null || maxValue !== null) {
+            const priceValue = parsePrice(item.price);
+            if (priceValue === null) {
+              return false;
+            }
+            if (minValue !== null && priceValue < minValue) {
+              return false;
+            }
+            if (maxValue !== null && priceValue > maxValue) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        resetGrid();
+        if (!items.length) {
+          updateStatus("Sin resultados", "warn");
+          sentinel.textContent = "Sin resultados.";
+          stopObserver();
+          return;
+        }
+
+        startObserver();
+        renderNextBatch();
+      }
+
+      function showError(message) {
+        errorBox.hidden = false;
+        errorBox.textContent = message;
+        updateStatus("Error", "warn");
+      }
+
+      async function loadData() {
+        const params = new URLSearchParams(window.location.search);
+        const dataUrl = params.get("data") || "vine_orders.json";
+
+        updateStatus("Cargando", "loading");
+        try {
+          const response = await fetch(dataUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const json = await response.json();
+          if (!Array.isArray(json)) {
+            throw new Error("El JSON no es una lista.");
+          }
+          allItems = json;
+          items = json;
+          if (!allItems.length) {
+            showError("El JSON esta vacio. Exporta datos con el script primero.");
+            return;
+          }
+          startObserver();
+          renderNextBatch();
+        } catch (err) {
+          showError(
+            "No se pudo cargar el JSON. Abre este HTML con un servidor local " +
+              "para permitir fetch (por ejemplo: python3 -m http.server)."
+          );
+        }
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            renderNextBatch();
+          }
+        },
+        { rootMargin: "300px" }
+      );
+
+      searchInput.addEventListener("input", (event) => {
+        applyFilters();
+      });
+
+      priceMinInput.addEventListener("input", applyFilters);
+      priceMaxInput.addEventListener("input", applyFilters);
+
+      loadData();
+    </script>
+  </body>
+</html>
